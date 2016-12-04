@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+        ul {
+            position: fixed;
+            top: 80px;
+            left: 80px;
+        }
+        ul li {
+            width: 50px;
+            height: 50px;
+            border: 1px solid #000;
+            margin-top: -1px;
+            cursor: pointer;
+            text-align: center;
+            line-height: 50px;
+            background: #ff44f2;
+        }
+        ol,body,html {
+            width: 100%;
+            height: 100%;
+        }
+        ol li {
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            font: 100px/500px "simsun";
+        }
+    </style>
+    <script src="jQuery1.11.1-min.js"></script>
+    <script>
+        window.onload = function () {
+            //需求1：给ul和ol中的li指定颜色。对应的li要颜色相同
+            //需求2：点击ul中的li，让ol中的li滑动到页面的显示区域。
+
+            //需求1：给ul和ol中的li指定颜色。对应的li要颜色相同
+            var ul = document.getElementsByTagName("ul")[0];
+            var ulLiArr = ul.children;
+            var ol = document.getElementsByTagName("ol")[0];
+            var olLiArr = ol.children;
+            //颜色数组
+            var colorArr = ["yellowgreen","skyblue","yellow","pink","#ff44f2"];
+            //初始化三个值。定时器，页面滑向的目标位置纵坐标，页面的当前纵坐标。
+            var timer = null,target = 0,leader = 0;
+
+
+
+            //利用for循环为每一个盒子上色，对应索引值的盒子相同颜色。
+            for(var i=0;i<olLiArr.length;i++){
+                olLiArr[i].style.background = colorArr[i];
+                ulLiArr[i].style.background = colorArr[i];
+
+
+
+
+                //需求2：点击ul中的li，让ol中的li滑动到页面的显示区域。
+                //为每一个ul中的li绑定事件
+                //属性绑定，每一个元素的索引值，绑定到自己身上。
+                ulLiArr[i].index = i;
+                ulLiArr[i].onclick = function () {
+                    //思路：屏幕滑动。1.利用四部(获取步长-二次处理-赋值-去除定时器)
+                    //不一样：2.当前值和3.目标值和定时器名字都需要自己定义和获取。
+
+                    //3.目标值获取；当点击下去ul中的li的那一刻，后去对应的ol中的li距离页面顶端的距离赋值给target
+                    target = olLiArr[this.index].offsetTop;
+                    //1.利用四部做定时器
+                    clearInterval(timer);
+                    timer = setInterval(function () {
+                        //四部(获取步长-二次处理-赋值-去除定时器)
+                        var step = (target-leader)/10;
+                        step = step>0?Math.ceil(step):Math.floor(step);
+                        leader = leader + step;
+                        //页面跳转
+                        window.scrollTo(0,leader);
+                        if(Math.abs(target-leader)<=Math.abs(step)){
+                            clearInterval(timer);
+                        }
+                    },30);
+                }
+            }
+
+            //2.同步获取leader值。(页面的纵坐标，实时获取)
+            window.onscroll = function () {
+                leader = scroll().top;
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <ul>
+        <li>鞋子</li>
+        <li>袜子</li>
+        <li>裤子</li>
+        <li>裙子</li>
+        <li>帽子</li>
+    </ul>
+    <ol>
+        <li>鞋子区域</li>
+        <li>袜子区域</li>
+        <li>裤子区域</li>
+        <li>裙子区域</li>
+        <li>帽子区域</li>
+    </ol>
+
+
+</body>
+</html>
